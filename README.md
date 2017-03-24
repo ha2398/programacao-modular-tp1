@@ -1,12 +1,12 @@
-#Programação Modular - Trabalho Prático 1 - 1º Semestre de 2017 - UFMG/DCC
+# Programação Modular - Trabalho Prático 1 - 1º Semestre de 2017 - UFMG/DCC
 
 **Autores**: [Hugo Sousa](https://github.com/ha2398) e [Jéssica Carneiro](https://github.com/jessicacarneiro)
 
-##Introdução
+## Introdução
 
 O objetivo desse trabalho é implementar um subconjunto do jogo Banco Imobiliário, utilizando a linguagem Java.
 
-##Instruções
+## Instruções
 
 O tabuleiro é composto de uma sequência de posições, sendo que em cada posição do tabuleiro será associado um determinado imóvel. 
 
@@ -23,7 +23,7 @@ Por meio da leitura de um arquivo (tabuleiro.txt), disponibilizado na mesma past
 descreve para cada imóvel um valor de compra e uma taxa de aluguel. O sistema também lê um segundo arquivo (jogadas.txt), também disponibilizado na mesma pasta de execução do
 programa. Esse arquivo descreve as instruções que correspondem às jogadas dos participantes no Banco Imobiliário. O arquivo jogadas.txt indica os jogadores e seus respectivos números tirados em um dado de seis faces. Cada linha deste arquivo será uma jogada.
 
-###Regras do Jogo
+### Regras do Jogo
 
 O jogo tem algumas simplificações comparado à versão de tabuleiro original. A seguir estão descritas algumas regras específicas:
 
@@ -38,7 +38,7 @@ O jogo tem algumas simplificações comparado à versão de tabuleiro original. 
 
 ## Arquivos de Entrada e Saída
 
-###Entrada
+### Entrada
 
 **tabuleiro.txt**: Este arquivo indica como será o tabuleiro do jogo.
 
@@ -74,7 +74,7 @@ separados por ponto e vírgula (;). Os campos são organizados da seguinte forma
 1. **Id do jogador**: corresponde ao identificador do jogador.
 1. **Valor do dado**: indica o valor do dado de seis faces, que o jogador tirou na jogada.
 
-###Saída
+### Saída
 
 O arquivo de saída será relativo apenas às estatísticas do jogo. Ao logo do jogo deverão ser computadas informações para responder as seguintes questões:
 
