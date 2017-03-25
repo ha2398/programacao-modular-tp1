@@ -29,7 +29,7 @@ public class TesteJogador {
 		for(int i = 0; i < 67; i++)
 			j1.incVoltasTabuleiro();
 		
-		assertEquals(67, j1.getVoltasTabuleiro(), 0.001);
+		assertEquals(67, j1.getVoltasTabuleiro());
 	}
 	
 	@Test
@@ -37,7 +37,7 @@ public class TesteJogador {
 		for(int i = 0; i < 210; i++)
 			j1.incNumPasseVez();
 		
-		assertEquals(210, j1.getNumPasseVez(), 0.001);
+		assertEquals(210, j1.getNumPasseVez());
 	}
 	
 	@Test
