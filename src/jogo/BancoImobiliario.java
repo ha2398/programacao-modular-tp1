@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BancoImobiliario {
-	private static final String nomeEntrada = "tabuleiro.txt";
+	private static final String nomeTabuleiro = "tabuleiro.txt";
 	private static final String nomeJogadas = "jogadas.txt";
 	private static final String nomeSaida = "estatistica.txt";
 	
@@ -19,58 +19,54 @@ public class BancoImobiliario {
 	
 	private static int rodadas;
 	
+	public static PosicaoTabuleiro[] getTabuleiro() { return tabuleiro; }
+	public static int getNumPosicoes() { return numPosicoes; }
+	
 	/**
-	 * Constroi o tabuleiro de jogo a partir do arquivo de entrada.
+	 * Constroi o tabuleiro de jogo a partir do arquivo de entrada do
+	 * tabuleiro.
 	 */
-	private static void constroiTabuleiro() {
-		try {
-			File entrada = new File(nomeEntrada);
-			Scanner leitor = new Scanner(entrada);
+	public static void constroiTabuleiro(Scanner leitor) {
+		String[] linha; // Corresponde a uma linha do arquivo tabuleiros.txt
+		int posicao; // Posição a ser inserida no tabuleiro.
+		int tipoPosicao; // Tipo da posição a ser inserida no tabuleiro.
+		int tipoImovel; // Tipo do imóvel, caso a posição represente um.
+		double valorImovel; // Valor do imóvel, caso a posição represente um.
+		double taxaAluguel; // Aluguel, caso a posição represente um imóvel. 
+		
+		numPosicoes = Integer.parseInt(leitor.nextLine());
+		
+		tabuleiro = new PosicaoTabuleiro[numPosicoes];
+		
+		for(int i = 0; i < numPosicoes; i++) {
+			linha = leitor.nextLine().split(";");
 			
-			String[] linha; // Corresponde a uma linha do arquivo tabuleiros.txt
-			int posicao; // Posição a ser inserida no tabuleiro.
-			int tipoPosicao; // Tipo da posição a ser inserida no tabuleiro.
-			int tipoImovel; // Tipo do imóvel, caso a posição represente um.
-			double valorImovel; // Valor do imóvel, caso a posição represente um.
-			double taxaAluguel; // Aluguel, caso a posição represente um imóvel. 
+			posicao = Integer.parseInt(linha[1]);
+			tipoPosicao = Integer.parseInt(linha[2]);
 			
-			numPosicoes = Integer.parseInt(leitor.nextLine());
+			PosicaoTabuleiro novaPosicao = null;
 			
-			tabuleiro = new PosicaoTabuleiro[numPosicoes];
-			
-			for(int i = 0; i < numPosicoes; i++) {
-				linha = leitor.nextLine().split(";");
+			// Analisa o tipo da posição
+			switch(tipoPosicao) {
+			case PosicaoTabuleiro.INICIO:
+			case PosicaoTabuleiro.PASSA:
+				novaPosicao = new PosicaoTabuleiro(tipoPosicao, null);
+				break;
 				
-				posicao = Integer.parseInt(linha[1]);
-				tipoPosicao = Integer.parseInt(linha[2]);
+			case PosicaoTabuleiro.IMOVEL:
+				tipoImovel = Integer.parseInt(linha[3]);
+				valorImovel = Double.parseDouble(linha[4]);
+				taxaAluguel = Double.parseDouble(linha[5]);
 				
-				PosicaoTabuleiro novaPosicao = null;
+				Imovel novoImovel = new Imovel(tipoImovel, valorImovel,
+						taxaAluguel);
 				
-				/* Analisa o tipo da posição */
-				switch(tipoPosicao) {
-				case PosicaoTabuleiro.INICIO:
-				case PosicaoTabuleiro.PASSA:
-					novaPosicao = new PosicaoTabuleiro(tipoPosicao, null);
-					break;
-					
-				case PosicaoTabuleiro.IMOVEL:
-					tipoImovel = Integer.parseInt(linha[3]);
-					valorImovel = Double.parseDouble(linha[4]);
-					taxaAluguel = Double.parseDouble(linha[5]);
-					
-					Imovel novoImovel = new Imovel(tipoImovel, valorImovel,
-							taxaAluguel);
-					
-					novaPosicao = new PosicaoTabuleiro(tipoPosicao, novoImovel);
-					break;
-				}
-				
-				tabuleiro[posicao - 1] = novaPosicao;
+				novaPosicao = new PosicaoTabuleiro(tipoPosicao, novoImovel);
+				break;
 			}
 			
-			leitor.close();
-		} catch(FileNotFoundException fnfe) {
-			System.out.println("Erro: arquivo \"tabuleiros.txt\" não encontrado.");
+			// Posições vão de 1 até n, mas posições em array de 0 a (n-1)
+			tabuleiro[posicao - 1] = novaPosicao;
 		}
 	}
 	
@@ -85,7 +81,20 @@ public class BancoImobiliario {
 	}
 	
 	public static final void main(String args[]) {
-		constroiTabuleiro();
+		File arquivoTabuleiro = new File(nomeTabuleiro);
+		Scanner leitor = null;
+		
+		try {
+			leitor = new Scanner(arquivoTabuleiro);
+		} catch (FileNotFoundException fnfe) {
+			System.out.println("Erro: arquivo \"" + nomeTabuleiro +
+					"\" não encontrado.");
+			return;
+		}
+		
+		constroiTabuleiro(leitor);
+		leitor.close();
+		
 		processaJogo();
 		imprimeEstatisticas();
 	}

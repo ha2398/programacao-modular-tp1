@@ -13,4 +13,7 @@ public class PosicaoTabuleiro {
 		this.tipo = tipo;
 		this.imovel = imovel;
 	}
+	
+	public int getTipo() { return this.tipo; }
+	public Imovel getImovel() { return this.imovel; };
 }
