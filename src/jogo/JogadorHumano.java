@@ -66,6 +66,10 @@ public class JogadorHumano extends Jogador {
 		return this.getSaldo() < 0;
 	}
 	
+	public int getPosicao() {
+		return this.posicaoNoTabuleiro;
+	}
+	
 	public void andaNoTabuleiro(int tamanho, int dado) {
 		this.posicaoNoTabuleiro = (this.posicaoNoTabuleiro + dado) % tamanho;
 	}

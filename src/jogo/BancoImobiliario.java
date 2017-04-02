@@ -80,6 +80,7 @@ public class BancoImobiliario {
 		String[] linha; // Corresponde a uma linha do arquivo de entrada.
 		int idJogador; // Identifica o jogador em cada rodada do jogo.
 		int valorDado; // Valor do dado de seis faces tirado na rodada.
+		int tipoNovaPosicao; // Tipo da posicao do jogador obtida na rodada.
 		
 		linha = leitor.nextLine().split("%");
 		rodadas = Integer.parseInt(linha[0]);
@@ -104,11 +105,25 @@ public class BancoImobiliario {
 				jogadoresAtivos++;
 			}
 			
+			// Jogadores com saldo negativo estão fora da partida.
+			if (jogadores[idJogador - 1].getSaldo() < 0) continue;
+			
 			// Jogador joga dado e anda no tabuleiro.
 			valorDado = Integer.parseInt(linha[2]);
 			jogadores[idJogador - 1].andaNoTabuleiro(numPosicoes, valorDado);
 			
+			tipoNovaPosicao =
+					tabuleiro[jogadores[idJogador-1].getPosicao()-1].getTipo();
 			
+			// Analisa posição em que o jogador caiu.
+			switch (tipoNovaPosicao) {
+			case PosicaoTabuleiro.INICIO: //TODO
+				break;
+			case PosicaoTabuleiro.PASSA: // Jogador não paga nada.
+				continue;
+			case PosicaoTabuleiro.IMOVEL: //TODO
+				break;
+			}
 		}
 	}
 	
