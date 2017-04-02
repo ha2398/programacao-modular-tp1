@@ -1,6 +1,7 @@
 package jogo;
 
 public class JogadorHumano extends Jogador {
+	private int posicaoNoTabuleiro;
 	
 	/**
 	 * Dados estatísticos sobre os jogadores
@@ -11,8 +12,9 @@ public class JogadorHumano extends Jogador {
 	private double aluguelPago;
 	private double compraImoveis;
 	
-	public JogadorHumano(int id, double saldo) {
+	public JogadorHumano(int id, double saldo, int pInicial) {
 		super(id, saldo);
+		this.posicaoNoTabuleiro = pInicial;
 		this.voltasTabuleiro = 0;
 		this.voltasTabuleiro = 0;
 		this.aluguelRecebido = 0.0;
@@ -62,5 +64,9 @@ public class JogadorHumano extends Jogador {
 	
 	public boolean jogadorPerdeu() {
 		return this.getSaldo() < 0;
+	}
+	
+	public void andaNoTabuleiro(int tamanho, int dado) {
+		this.posicaoNoTabuleiro = (this.posicaoNoTabuleiro + dado) % tamanho;
 	}
 }

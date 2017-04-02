@@ -10,7 +10,7 @@ import jogo.JogadorBanco;
 public class TesteJogador {
 	double saldoInicial = 5505.0;
 	JogadorBanco j1 = new JogadorBanco();
-	JogadorHumano j2 = new JogadorHumano(1, saldoInicial);
+	JogadorHumano j2 = new JogadorHumano(1, saldoInicial, 1);
 	
 	@Test
 	public void testaAumentaSaldo() {
