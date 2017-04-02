@@ -80,7 +80,6 @@ public class BancoImobiliario {
 		String[] linha; // Corresponde a uma linha do arquivo de entrada.
 		int idJogador; // Identifica o jogador em cada rodada do jogo.
 		int valorDado; // Valor do dado de seis faces tirado na rodada.
-		int tipoNovaPosicao; // Tipo da posicao do jogador obtida na rodada.
 		
 		linha = leitor.nextLine().split("%");
 		rodadas = Integer.parseInt(linha[0]);
@@ -97,23 +96,26 @@ public class BancoImobiliario {
 			
 			idJogador = Integer.parseInt(linha[1]);
 			
+			JogadorHumano jogadorAtual = jogadores[idJogador - 1];
+			
 			// Checa se o jogador atual ainda não realizou nenhuma jogada.
-			if (jogadores[idJogador - 1] == null) {
-				jogadores[idJogador - 1] =
+			if (jogadorAtual == null) {
+				jogadorAtual =
 						new JogadorHumano(idJogador, saldoInicialJogadores,
 								pInicialJogadores);
 				jogadoresAtivos++;
 			}
 			
 			// Jogadores com saldo negativo estão fora da partida.
-			if (jogadores[idJogador - 1].getSaldo() < 0) continue;
+			if (jogadorAtual.getSaldo() < 0) continue;
 			
 			// Jogador joga dado e anda no tabuleiro.
 			valorDado = Integer.parseInt(linha[2]);
-			jogadores[idJogador - 1].andaNoTabuleiro(numPosicoes, valorDado);
+			jogadorAtual.andaNoTabuleiro(numPosicoes, valorDado);
 			
-			tipoNovaPosicao =
-					tabuleiro[jogadores[idJogador-1].getPosicao()-1].getTipo();
+			PosicaoTabuleiro posicaoAtual =
+					tabuleiro[jogadorAtual.getPosicao()-1];
+			int tipoNovaPosicao = posicaoAtual.getTipo();
 			
 			// Analisa posição em que o jogador caiu.
 			switch (tipoNovaPosicao) {
@@ -121,9 +123,26 @@ public class BancoImobiliario {
 				break;
 			case PosicaoTabuleiro.PASSA: // Jogador não paga nada.
 				continue;
-			case PosicaoTabuleiro.IMOVEL: //TODO
+			case PosicaoTabuleiro.IMOVEL:
+				/**
+				 * Jogador compra imóvel, se for do banco e
+				 * jogador paga aluguel do imóvel, se for de outro jogador.
+				 */
+				Imovel imovelAtual = posicaoAtual.getImovel();
+				int idDonoImovel = imovelAtual.getDono();
+				double valorCompra = imovelAtual.getValorCompra();
+				
+				if (idDonoImovel == Imovel.BANCO) {
+					jogadorAtual.compraImovel(imovelAtual);
+				} else if (idDonoImovel != idJogador) {
+					JogadorHumano donoImovel = jogadores[idDonoImovel-1];
+					jogadorAtual.pagaAluguel(imovelAtual, donoImovel);
+				}
+				
 				break;
 			}
+			
+			jogadores[idJogador - 1] = jogadorAtual;
 		}
 	}
 	

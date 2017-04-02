@@ -73,4 +73,21 @@ public class JogadorHumano extends Jogador {
 	public void andaNoTabuleiro(int tamanho, int dado) {
 		this.posicaoNoTabuleiro = (this.posicaoNoTabuleiro + dado) % tamanho;
 	}
+	
+	public void compraImovel(Imovel imovelComprado) {
+		double valor = imovelComprado.getValorCompra();
+		
+		if (this.getSaldo() < valor)
+			return;
+		
+		this.reduzSaldo(valor);
+		imovelComprado.setDono(this.getId());
+	}
+	
+	public void pagaAluguel(Imovel imovelAlugado, Jogador dono) {
+		double taxa = imovelAlugado.getTaxaAluguel();
+		
+		this.reduzSaldo(taxa);
+		dono.aumentaSaldo(taxa);
+	}
 }

@@ -9,6 +9,8 @@ public class Imovel {
 	public static final int HOTEL = 4;
 	public static final int HOSPITAL = 5;
 	
+	public static final int BANCO = -1;  // Banco é o dono inicial; seu ID é -1
+	
 	private int tipo;
 	private int dono;
 	private double valorCompra;
@@ -16,7 +18,7 @@ public class Imovel {
 	
 	public Imovel(int tipo, double compra, double aluguel) {
 		this.tipo = tipo;
-		this.dono = -1; // Banco é o dono inicial; seu ID é -1
+		this.dono = BANCO;
 		this.valorCompra = compra;
 		this.taxaAluguel = aluguel;
 	}
