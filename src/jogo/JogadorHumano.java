@@ -70,8 +70,30 @@ public class JogadorHumano extends Jogador {
 		return this.posicaoNoTabuleiro;
 	}
 	
-	public void andaNoTabuleiro(int tamanho, int dado) {
-		this.posicaoNoTabuleiro = (this.posicaoNoTabuleiro + dado) % tamanho;
+	/**
+	 * Anda no tabuleiro e retorna um valor boolean que indica se o jogador
+	 * passou pela posição inicial.
+	 * @param pInicial -> Indica a posição inicial do tabuleiro.
+	 * @param tamanho -> Tamanho do tabuleiro.
+	 * @param dado -> Valor do dado de seis faces obtido na rodada.
+	 * @return true sse o jogador passou pela posição inicial.
+	 */
+	public boolean andaNoTabuleiro(int pInicial, int tamanho, int dado) {
+		//this.posicaoNoTabuleiro = (this.posicaoNoTabuleiro + dado) % tamanho;
+		
+		/**
+		 * Indica se o jogador passou pela posição inicial nessa rodada
+		 */
+		boolean passouInicio = false;
+		
+		for (int i = 0; i < dado; i++) {
+			this.posicaoNoTabuleiro = ((this.posicaoNoTabuleiro++) % tamanho) + 1;
+			
+			if (this.posicaoNoTabuleiro == pInicial)
+				passouInicio = true;
+		}
+		
+		return passouInicio;
 	}
 	
 	public void compraImovel(Imovel imovelComprado) {

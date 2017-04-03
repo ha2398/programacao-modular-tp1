@@ -110,11 +110,26 @@ public class BancoImobiliario {
 			if (jogadorAtual.getSaldo() < 0) continue;
 			
 			// Jogador joga dado e anda no tabuleiro.
+			
+			/**
+			 * Indica se o jogador passou pela posição inicial nessa rodada
+			 */
+			boolean passouInicio = false;
+			
 			valorDado = Integer.parseInt(linha[2]);
-			jogadorAtual.andaNoTabuleiro(numPosicoes, valorDado);
+			passouInicio =
+					jogadorAtual.andaNoTabuleiro(pInicialJogadores,
+							numPosicoes, valorDado);
+			
+			/**
+			 * Toda vez que um jogador passa na posição inicial, recebe uma
+			 * taxa do Banco.
+			 */
+			if (passouInicio) JogadorBanco.pagaRodada(jogadorAtual);
 			
 			PosicaoTabuleiro posicaoAtual =
 					tabuleiro[jogadorAtual.getPosicao()-1];
+			
 			int tipoNovaPosicao = posicaoAtual.getTipo();
 			
 			// Analisa posição em que o jogador caiu.
