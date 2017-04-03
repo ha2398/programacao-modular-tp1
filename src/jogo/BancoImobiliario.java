@@ -14,7 +14,7 @@ public class BancoImobiliario {
 	private static int pInicialJogadores = 1;
 	
 	private static int numJogadores;
-	private static int jogadoresAtivos = 0;
+	private static int jogadoresAtivos;
 	private static double saldoInicialJogadores;
 	private static JogadorHumano[] jogadores;
 	
@@ -88,10 +88,15 @@ public class BancoImobiliario {
 		numJogadores = Integer.parseInt(linha[1]);
 		saldoInicialJogadores = Integer.parseInt(linha[2]);
 		
+		jogadoresAtivos = numJogadores;
+		
 		jogadores = new JogadorHumano[numJogadores];
 		banco = new JogadorBanco();
 		
 		for (int i = 0; i < rodadas; i++) {
+			// Termina partida caso só exista um jogador com saldo positivo.
+			if (jogadoresAtivos <= 1) break;
+			
 			linha = leitor.nextLine().split(";");
 			
 			// FInaliza o jogo caso a instrução seja DUMP.
@@ -106,7 +111,6 @@ public class BancoImobiliario {
 				jogadorAtual =
 						new JogadorHumano(idJogador, saldoInicialJogadores,
 								pInicialJogadores);
-				jogadoresAtivos++;
 			}
 			
 			// Jogadores com saldo negativo estão fora da partida.
@@ -155,6 +159,12 @@ public class BancoImobiliario {
 					JogadorHumano donoImovel = jogadores[idDonoImovel-1];
 					jogadorAtual.pagaAluguel(imovelAtual, donoImovel);
 				}
+				
+				/**
+				 * Checa se o jogador atual ficou com saldo negativo e portanto
+				 * deve ser eliminado do jogo.
+				 */
+				if (jogadorAtual.getSaldo() <= 0) jogadoresAtivos--;
 				
 				break;
 			}
