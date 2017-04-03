@@ -18,6 +18,8 @@ public class BancoImobiliario {
 	private static double saldoInicialJogadores;
 	private static JogadorHumano[] jogadores;
 	
+	private static JogadorBanco banco;
+	
 	private static int rodadas;
 	
 	public static PosicaoTabuleiro[] getTabuleiro() { return tabuleiro; }
@@ -87,6 +89,7 @@ public class BancoImobiliario {
 		saldoInicialJogadores = Integer.parseInt(linha[2]);
 		
 		jogadores = new JogadorHumano[numJogadores];
+		banco = new JogadorBanco();
 		
 		for (int i = 0; i < rodadas; i++) {
 			linha = leitor.nextLine().split(";");
@@ -125,7 +128,7 @@ public class BancoImobiliario {
 			 * Toda vez que um jogador passa na posição inicial, recebe uma
 			 * taxa do Banco.
 			 */
-			if (passouInicio) JogadorBanco.pagaRodada(jogadorAtual);
+			if (passouInicio) banco.pagaRodada(jogadorAtual);
 			
 			PosicaoTabuleiro posicaoAtual =
 					tabuleiro[jogadorAtual.getPosicao()-1];
@@ -145,7 +148,6 @@ public class BancoImobiliario {
 				 */
 				Imovel imovelAtual = posicaoAtual.getImovel();
 				int idDonoImovel = imovelAtual.getDono();
-				double valorCompra = imovelAtual.getValorCompra();
 				
 				if (idDonoImovel == Imovel.BANCO) {
 					jogadorAtual.compraImovel(imovelAtual);
@@ -196,6 +198,7 @@ public class BancoImobiliario {
 		}
 		
 		processaJogo(leitor);
+		leitor.close();
 		
 		// Impressão de estatísticas.
 		

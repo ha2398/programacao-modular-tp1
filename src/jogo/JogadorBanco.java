@@ -9,7 +9,7 @@ public class JogadorBanco extends Jogador {
 		super(-1, Double.POSITIVE_INFINITY); 
 	}
 	
-	public static void pagaRodada(JogadorHumano j1) {
+	public void pagaRodada(JogadorHumano j1) {
 		j1.aumentaSaldo(valorRodada);
 	}
 }
