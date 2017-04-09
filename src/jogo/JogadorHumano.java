@@ -104,6 +104,7 @@ public class JogadorHumano extends Jogador {
 		
 		this.reduzSaldo(valor);
 		imovelComprado.setDono(this.getId());
+		this.aumentaCompraImoveis(valor);
 	}
 	
 	public void pagaAluguel(Imovel imovelAlugado, Jogador dono) {
@@ -111,5 +112,6 @@ public class JogadorHumano extends Jogador {
 		
 		this.reduzSaldo(taxa);
 		dono.aumentaSaldo(taxa);
+		this.aumentaAluguelPago(taxa);
 	}
 }
