@@ -1,7 +1,13 @@
 package jogo;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.Scanner;
 
 public class BancoImobiliario {
@@ -174,8 +180,73 @@ public class BancoImobiliario {
 	}
 	
 	//TODO
-	private static void imprimeEstatisticas() {
+	private static String imprimeEstatisticas() {
+		String estatisticas = "";
 		
+		// Imprime o número de rodadas
+		estatisticas += "1:" + rodadas + "\n";
+		
+		// Imprime número de voltas de cada jogador
+		estatisticas += "2:";
+		for(int i = 0; i < numJogadores; i++) {
+			estatisticas += (i+1) + "-" + jogadores[i].getVoltasTabuleiro();
+			if(i + 1 < numJogadores) {
+				estatisticas += ";";
+			}
+		}
+		estatisticas += "\n";
+		
+		// Imprime saldo final de cada jogador
+		estatisticas += "3:";
+		for(int i = 0; i < numJogadores; i++) {
+			estatisticas += (i+1) + "-" + jogadores[i].getSaldo();
+			if(i + 1 < numJogadores) {
+				estatisticas += ";";
+			}
+		}
+		estatisticas += "\n";
+		
+		// Imprime o valor recebido em aluguéis por cada jogador
+		estatisticas += "4:";
+		for(int i = 0; i < numJogadores; i++) {
+			estatisticas += (i+1) + "-" + jogadores[i].getAluguelRecebido();
+			if(i + 1 < numJogadores) {
+				estatisticas += ";";
+			}
+		}
+		estatisticas += "\n";
+		
+		// Imprime o valor pago em aluguéis por cada jogador
+		estatisticas += "5:";
+		for(int i = 0; i < numJogadores; i++) {
+			estatisticas += (i+1) + "-" + jogadores[i].getAluguelPago();
+			if(i + 1 < numJogadores) {
+				estatisticas += ";";
+			}
+		}
+		estatisticas += "\n";
+		
+		// Imprime o valor gasto na compra de imóveis por cada jogador
+		estatisticas += "6:";
+		for(int i = 0; i < numJogadores; i++) {
+			estatisticas += (i+1) + "-" + jogadores[i].getCompraImoveis();
+			if(i + 1 < numJogadores) {
+				estatisticas += ";";
+			}
+		}
+		estatisticas += "\n";
+		
+		// Imprime o valor gasto na compra de imóveis por cada jogador
+		estatisticas += "6:";
+		for(int i = 0; i < numJogadores; i++) {
+			estatisticas += (i+1) + "-" + jogadores[i].getNumPasseVez();
+			if(i + 1 < numJogadores) {
+				estatisticas += ";";
+			}
+		}
+		estatisticas += "\n";
+		
+		return estatisticas;
 	}
 	
 	public static final void main(String args[]) {
@@ -211,7 +282,18 @@ public class BancoImobiliario {
 		leitor.close();
 		
 		// Impressão de estatísticas.
+		try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+	              new FileOutputStream(nomeSaida), "utf-8"))) {
+			writer.write(imprimeEstatisticas());
+		} catch (UnsupportedEncodingException e) {
+			System.out.println("UTF-8 não suportado.");
+		} catch (FileNotFoundException e) {
+			System.out.println("Erro: arquivo \"" + nomeSaida +
+					"\" não encontrado.");
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		imprimeEstatisticas();
 	}
 }
