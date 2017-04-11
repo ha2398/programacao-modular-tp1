@@ -142,7 +142,10 @@ public class BancoImobiliario {
 			 * Toda vez que um jogador passa na posição inicial, recebe uma
 			 * taxa do Banco.
 			 */
-			if (passouInicio) banco.pagaRodada(jogadorAtual);
+			if (passouInicio) {
+				banco.pagaRodada(jogadorAtual);
+				jogadorAtual.incVoltasTabuleiro();
+			}
 			
 			PosicaoTabuleiro posicaoAtual =
 					tabuleiro[jogadorAtual.getPosicao()-1];
