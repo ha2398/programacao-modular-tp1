@@ -154,10 +154,11 @@ public class BancoImobiliario {
 			
 			// Analisa posição em que o jogador caiu.
 			switch (tipoNovaPosicao) {
-			case PosicaoTabuleiro.INICIO: //TODO
+			case PosicaoTabuleiro.INICIO:
 				break;
 			case PosicaoTabuleiro.PASSA: // Jogador não paga nada.
-				continue;
+				jogadorAtual.incNumPasseVez();
+				break;
 			case PosicaoTabuleiro.IMOVEL:
 				/**
 				 * Jogador compra imóvel, se for do banco e
