@@ -111,8 +111,8 @@ public class BancoImobiliario {
 			
 			idJogador = Integer.parseInt(linha[1]);
 			
-			// Checa se esse é o último jogador da rodada.
-			if (idJogador == numJogadores) rodadas++;
+			// Checa se uma nova rodada está começando.
+			if (idJogador == 1) rodadas++;
 			
 			JogadorHumano jogadorAtual = jogadores[idJogador - 1];
 			
@@ -244,7 +244,7 @@ public class BancoImobiliario {
 		estatisticas += "\n";
 		
 		// Imprime o valor gasto na compra de imóveis por cada jogador
-		estatisticas += "6:";
+		estatisticas += "7:";
 		for(int i = 0; i < numJogadores; i++) {
 			estatisticas += (i+1) + "-" + jogadores[i].getNumPasseVez();
 			if(i + 1 < numJogadores) {
