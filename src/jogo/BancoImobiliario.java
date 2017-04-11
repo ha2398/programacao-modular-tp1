@@ -26,7 +26,8 @@ public class BancoImobiliario {
 	
 	private static JogadorBanco banco;
 	
-	private static int rodadas;
+	private static int numJogadas;
+	private static int rodadas = 0;
 	
 	public static PosicaoTabuleiro[] getTabuleiro() { return tabuleiro; }
 	public static int getNumPosicoes() { return numPosicoes; }
@@ -90,7 +91,7 @@ public class BancoImobiliario {
 		int valorDado; // Valor do dado de seis faces tirado na rodada.
 		
 		linha = leitor.nextLine().split("%");
-		rodadas = Integer.parseInt(linha[0]);
+		numJogadas = Integer.parseInt(linha[0]);
 		numJogadores = Integer.parseInt(linha[1]);
 		saldoInicialJogadores = Integer.parseInt(linha[2]);
 		
@@ -99,7 +100,7 @@ public class BancoImobiliario {
 		jogadores = new JogadorHumano[numJogadores];
 		banco = new JogadorBanco();
 		
-		for (int i = 0; i < rodadas; i++) {
+		for (int i = 0; i < numJogadas; i++) {
 			// Termina partida caso só exista um jogador com saldo positivo.
 			if (jogadoresAtivos <= 1) break;
 			
@@ -109,6 +110,9 @@ public class BancoImobiliario {
 			if (linha[0].equals("DUMP")) break;
 			
 			idJogador = Integer.parseInt(linha[1]);
+			
+			// Checa se esse é o último jogador da rodada.
+			if (idJogador == numJogadores) rodadas++;
 			
 			JogadorHumano jogadorAtual = jogadores[idJogador - 1];
 			
