@@ -252,7 +252,6 @@ public class BancoImobiliario {
 				estatisticas += ";";
 			}
 		}
-		estatisticas += "\n";
 		
 		return estatisticas;
 	}
