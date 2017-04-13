@@ -1,42 +1,50 @@
 package jogo;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.util.Scanner;
 
 public class BancoImobiliario {
-	private static final String nomeTabuleiro = "tabuleiro.txt";
-	private static final String nomeJogadas = "jogadas.txt";
-	private static final String nomeSaida = "estatistica.txt";
+	public static final String nomeTabuleiro = "tabuleiro.txt";
+	public static final String nomeJogadas = "jogadas.txt";
+	public static final String nomeSaida = "estatistica.txt";
 	
-	private static PosicaoTabuleiro[] tabuleiro;
-	private static int numPosicoes;
-	private static int pInicialJogadores = 1;
+	private PosicaoTabuleiro[] tabuleiro;
+	private int numPosicoes;
+	private int pInicialJogadores;
 	
-	private static int numJogadores;
-	private static int jogadoresAtivos;
-	private static double saldoInicialJogadores;
-	private static JogadorHumano[] jogadores;
+	private int numJogadores;
+	private int jogadoresAtivos;
+	private double saldoInicialJogadores;
+	private JogadorHumano[] jogadores;
 	
-	private static JogadorBanco banco;
+	private JogadorBanco banco;
 	
-	private static int numJogadas;
-	private static int rodadas = 0;
+	private int numJogadas;
+	private int rodadas;
 	
-	public static PosicaoTabuleiro[] getTabuleiro() { return tabuleiro; }
-	public static int getNumPosicoes() { return numPosicoes; }
+	/**
+	 * Construtor para BancoImobiliario.
+	 */
+	public BancoImobiliario() {
+		this.pInicialJogadores = 1;
+		this.rodadas = 0;
+	}
+	
+	/**
+	 * @return O tabuleiro da instância de BancoImobiliario.
+	 */
+	public PosicaoTabuleiro[] getTabuleiro() { return tabuleiro; }
+	
+	/**
+	 * @return O número de posições do tabuleiro da instância de
+	 * BancoImobiliario.
+	 */
+	public int getNumPosicoes() { return numPosicoes; }
 	
 	/**
 	 * Constroi o tabuleiro de jogo a partir do arquivo de entrada do
 	 * tabuleiro.
 	 */
-	public static void constroiTabuleiro(Scanner leitor) {
+	public void constroiTabuleiro(Scanner leitor) {
 		String[] linha; // Corresponde a uma linha do arquivo de entrada.
 		int posicao; // Posição a ser inserida no tabuleiro.
 		int tipoPosicao; // Tipo da posição a ser inserida no tabuleiro.
@@ -81,11 +89,47 @@ public class BancoImobiliario {
 		}
 	}
 	
+	private void analisaPosicao(PosicaoTabuleiro posicao,
+			JogadorHumano jogador) {
+		int tipo = posicao.getTipo();
+		
+		// Analisa posição em que o jogador caiu.
+		switch (tipo) {
+		case PosicaoTabuleiro.INICIO:
+			break;
+		case PosicaoTabuleiro.PASSA: // Jogador não paga nada.
+			jogador.incNumPasseVez();
+			break;
+		case PosicaoTabuleiro.IMOVEL:
+			/**
+			 * Jogador compra imóvel, se for do banco e
+			 * jogador paga aluguel do imóvel, se for de outro jogador.
+			 */
+			Imovel imovelAtual = posicao.getImovel();
+			int idDonoImovel = imovelAtual.getDono();
+			
+			if (idDonoImovel == Imovel.BANCO) {
+				jogador.compraImovel(imovelAtual);
+			} else if (idDonoImovel != jogador.getId()) {
+				JogadorHumano donoImovel = jogadores[idDonoImovel-1];
+				jogador.pagaAluguel(imovelAtual, donoImovel);
+			}
+			
+			/**
+			 * Checa se o jogador atual ficou com saldo negativo e portanto
+			 * deve ser eliminado do jogo.
+			 */
+			if (jogador.getSaldo() <= 0) this.jogadoresAtivos--;
+			
+			break;
+		}
+	}
+	
 	/**
 	 * Processa as jogadas do jogo como descritas no arquivo de entrada
 	 * de jogadas.
 	 */
-	private static void processaJogo(Scanner leitor) {
+	public void processaJogo(Scanner leitor) {
 		String[] linha; // Corresponde a uma linha do arquivo de entrada.
 		int idJogador; // Identifica o jogador em cada rodada do jogo.
 		int valorDado; // Valor do dado de seis faces tirado na rodada.
@@ -150,45 +194,17 @@ public class BancoImobiliario {
 			PosicaoTabuleiro posicaoAtual =
 					tabuleiro[jogadorAtual.getPosicao()-1];
 			
-			int tipoNovaPosicao = posicaoAtual.getTipo();
-			
-			// Analisa posição em que o jogador caiu.
-			switch (tipoNovaPosicao) {
-			case PosicaoTabuleiro.INICIO:
-				break;
-			case PosicaoTabuleiro.PASSA: // Jogador não paga nada.
-				jogadorAtual.incNumPasseVez();
-				break;
-			case PosicaoTabuleiro.IMOVEL:
-				/**
-				 * Jogador compra imóvel, se for do banco e
-				 * jogador paga aluguel do imóvel, se for de outro jogador.
-				 */
-				Imovel imovelAtual = posicaoAtual.getImovel();
-				int idDonoImovel = imovelAtual.getDono();
-				
-				if (idDonoImovel == Imovel.BANCO) {
-					jogadorAtual.compraImovel(imovelAtual);
-				} else if (idDonoImovel != idJogador) {
-					JogadorHumano donoImovel = jogadores[idDonoImovel-1];
-					jogadorAtual.pagaAluguel(imovelAtual, donoImovel);
-				}
-				
-				/**
-				 * Checa se o jogador atual ficou com saldo negativo e portanto
-				 * deve ser eliminado do jogo.
-				 */
-				if (jogadorAtual.getSaldo() <= 0) jogadoresAtivos--;
-				
-				break;
-			}
+			analisaPosicao(posicaoAtual, jogadorAtual);
 			
 			jogadores[idJogador - 1] = jogadorAtual;
 		}
 	}
 	
-	//TODO
-	private static String imprimeEstatisticas() {
+	/**
+	 * Coleta informações estatísticas sobre o jogo.
+	 * @return String que representa as estatísticas do jogo.
+	 */
+	public String imprimeEstatisticas() {
 		String estatisticas = "";
 		
 		// Imprime o número de rodadas
@@ -254,53 +270,5 @@ public class BancoImobiliario {
 		}
 		
 		return estatisticas;
-	}
-	
-	public static final void main(String args[]) {
-		File arquivoTabuleiro = new File(nomeTabuleiro);
-		Scanner leitor = null;
-		
-		// Construção do tabuleiro de jogo.
-		
-		try {
-			leitor = new Scanner(arquivoTabuleiro);
-		} catch (FileNotFoundException fnfe) {
-			System.out.println("Erro: arquivo \"" + nomeTabuleiro +
-					"\" não encontrado.");
-			return;
-		}
-		
-		constroiTabuleiro(leitor);
-		leitor.close();
-		
-		// Processamento de jogadas.
-		
-		File arquivoJogadas = new File(nomeJogadas);
-		
-		try {
-			leitor = new Scanner(arquivoJogadas);
-		} catch (FileNotFoundException fnfe) {
-			System.out.println("Erro: arquivo \"" + nomeJogadas +
-					"\" não encontrado.");
-			return;
-		}
-		
-		processaJogo(leitor);
-		leitor.close();
-		
-		// Impressão de estatísticas.
-		try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-	              new FileOutputStream(nomeSaida), "utf-8"))) {
-			writer.write(imprimeEstatisticas());
-		} catch (UnsupportedEncodingException e) {
-			System.out.println("UTF-8 não suportado.");
-		} catch (FileNotFoundException e) {
-			System.out.println("Erro: arquivo \"" + nomeSaida +
-					"\" não encontrado.");
-			return;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 	}
 }
