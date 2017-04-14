@@ -3,20 +3,21 @@ package jogo;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Scanner;
+import java.util.Vector;
 
 public class BancoImobiliario {
 	public static final String nomeTabuleiro = "tabuleiro.txt";
 	public static final String nomeJogadas = "jogadas.txt";
 	public static final String nomeSaida = "estatistica.txt";
 	
-	private PosicaoTabuleiro[] tabuleiro;
+	private Vector<PosicaoTabuleiro> tabuleiro;
 	private int numPosicoes;
 	private int pInicialJogadores;
 	
 	private int numJogadores;
 	private int jogadoresAtivos;
 	private double saldoInicialJogadores;
-	private JogadorHumano[] jogadores;
+	private Vector<JogadorHumano> jogadores;
 	
 	private JogadorBanco banco;
 	
@@ -45,7 +46,8 @@ public class BancoImobiliario {
 		
 		numPosicoes = Integer.parseInt(leitor.nextLine());
 		
-		tabuleiro = new PosicaoTabuleiro[numPosicoes];
+		tabuleiro = new Vector<>();
+		tabuleiro.setSize(numPosicoes);
 		
 		for(int i = 0; i < numPosicoes; i++) {
 			linha = leitor.nextLine().split(";");
@@ -75,8 +77,8 @@ public class BancoImobiliario {
 				break;
 			}
 			
-			// Posições vão de 1 até n, mas posições em array de 0 a (n-1)
-			tabuleiro[posicao - 1] = novaPosicao;
+			// Posições vão de 1 até n, mas posições em Vector de 0 a (n-1)
+			tabuleiro.set(posicao-1, novaPosicao);
 		}
 	}
 	
@@ -102,7 +104,7 @@ public class BancoImobiliario {
 			if (idDonoImovel == Imovel.BANCO) {
 				jogador.compraImovel(imovelAtual);
 			} else if (idDonoImovel != jogador.getId()) {
-				JogadorHumano donoImovel = jogadores[idDonoImovel-1];
+				JogadorHumano donoImovel = jogadores.get(idDonoImovel-1);
 				jogador.pagaAluguel(imovelAtual, donoImovel);
 			}
 			
@@ -132,7 +134,9 @@ public class BancoImobiliario {
 		
 		jogadoresAtivos = numJogadores;
 		
-		jogadores = new JogadorHumano[numJogadores];
+		jogadores = new Vector<>();
+		jogadores.setSize(numJogadores);
+		
 		banco = new JogadorBanco();
 		
 		for (int i = 0; i < numJogadas; i++) {
@@ -149,7 +153,7 @@ public class BancoImobiliario {
 			// Checa se uma nova rodada está começando.
 			if (idJogador == 1) rodadas++;
 			
-			JogadorHumano jogadorAtual = jogadores[idJogador - 1];
+			JogadorHumano jogadorAtual = jogadores.get(idJogador-1);
 			
 			// Checa se o jogador atual ainda não realizou nenhuma jogada.
 			if (jogadorAtual == null) {
@@ -183,11 +187,11 @@ public class BancoImobiliario {
 			}
 			
 			PosicaoTabuleiro posicaoAtual =
-					tabuleiro[jogadorAtual.getPosicao()-1];
+					tabuleiro.get(jogadorAtual.getPosicao()-1);
 			
 			analisaPosicao(posicaoAtual, jogadorAtual);
 			
-			jogadores[idJogador - 1] = jogadorAtual;
+			jogadores.set(idJogador - 1, jogadorAtual);
 		}
 	}
 	
@@ -210,7 +214,8 @@ public class BancoImobiliario {
 		// Imprime número de voltas de cada jogador
 		estatisticas += "2:";
 		for(int i = 0; i < numJogadores; i++) {
-			estatisticas += (i+1) + "-" + jogadores[i].getVoltasTabuleiro();
+			int voltas = jogadores.get(i).getVoltasTabuleiro();
+			estatisticas += (i+1) + "-" + voltas;
 			if(i + 1 < numJogadores) {
 				estatisticas += ";";
 			}
@@ -220,7 +225,8 @@ public class BancoImobiliario {
 		// Imprime saldo final de cada jogador
 		estatisticas += "3:";
 		for(int i = 0; i < numJogadores; i++) {
-			aux = df.format(jogadores[i].getSaldo());
+			double saldo = jogadores.get(i).getSaldo();
+			aux = df.format(saldo);
 			
 			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
@@ -232,7 +238,8 @@ public class BancoImobiliario {
 		// Imprime o valor recebido em aluguéis por cada jogador
 		estatisticas += "4:";
 		for(int i = 0; i < numJogadores; i++) {
-			aux = df.format(jogadores[i].getAluguelRecebido());
+			double aluguelRecebido = jogadores.get(i).getAluguelRecebido();
+			aux = df.format(aluguelRecebido);
 			
 			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
@@ -244,7 +251,8 @@ public class BancoImobiliario {
 		// Imprime o valor pago em aluguéis por cada jogador
 		estatisticas += "5:";
 		for(int i = 0; i < numJogadores; i++) {
-			aux = df.format(jogadores[i].getAluguelPago());
+			double aluguelPago = jogadores.get(i).getAluguelPago();
+			aux = df.format(aluguelPago);
 			
 			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
@@ -256,7 +264,8 @@ public class BancoImobiliario {
 		// Imprime o valor gasto na compra de imóveis por cada jogador
 		estatisticas += "6:";
 		for(int i = 0; i < numJogadores; i++) {
-			aux = df.format(jogadores[i].getCompraImoveis());
+			double valorCompra = jogadores.get(i).getCompraImoveis();
+			aux = df.format(valorCompra);
 			
 			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
@@ -268,7 +277,8 @@ public class BancoImobiliario {
 		// Imprime o número de "passe a vez" de cada jogador.
 		estatisticas += "7:";
 		for(int i = 0; i < numJogadores; i++) {
-			estatisticas += (i+1) + "-" + jogadores[i].getNumPasseVez();
+			int passaVez = jogadores.get(i).getNumPasseVez();
+			estatisticas += (i+1) + "-" + passaVez;
 			if(i + 1 < numJogadores) {
 				estatisticas += ";";
 			}
