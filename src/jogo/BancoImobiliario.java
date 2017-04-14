@@ -1,5 +1,7 @@
 package jogo;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Scanner;
 
 public class BancoImobiliario {
@@ -28,17 +30,6 @@ public class BancoImobiliario {
 		this.pInicialJogadores = 1;
 		this.rodadas = 0;
 	}
-	
-	/**
-	 * @return O tabuleiro da instância de BancoImobiliario.
-	 */
-	public PosicaoTabuleiro[] getTabuleiro() { return tabuleiro; }
-	
-	/**
-	 * @return O número de posições do tabuleiro da instância de
-	 * BancoImobiliario.
-	 */
-	public int getNumPosicoes() { return numPosicoes; }
 	
 	/**
 	 * Constroi o tabuleiro de jogo a partir do arquivo de entrada do
@@ -205,6 +196,12 @@ public class BancoImobiliario {
 	 * @return String que representa as estatísticas do jogo.
 	 */
 	public String imprimeEstatisticas() {
+		DecimalFormat df = new DecimalFormat("0.00");
+		DecimalFormatSymbols sym = DecimalFormatSymbols.getInstance();
+		sym.setDecimalSeparator('.');
+		df.setDecimalFormatSymbols(sym);
+		
+		String aux;
 		String estatisticas = "";
 		
 		// Imprime o número de rodadas
@@ -223,7 +220,9 @@ public class BancoImobiliario {
 		// Imprime saldo final de cada jogador
 		estatisticas += "3:";
 		for(int i = 0; i < numJogadores; i++) {
-			estatisticas += (i+1) + "-" + jogadores[i].getSaldo();
+			aux = df.format(jogadores[i].getSaldo());
+			
+			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
 				estatisticas += ";";
 			}
@@ -233,7 +232,9 @@ public class BancoImobiliario {
 		// Imprime o valor recebido em aluguéis por cada jogador
 		estatisticas += "4:";
 		for(int i = 0; i < numJogadores; i++) {
-			estatisticas += (i+1) + "-" + jogadores[i].getAluguelRecebido();
+			aux = df.format(jogadores[i].getAluguelRecebido());
+			
+			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
 				estatisticas += ";";
 			}
@@ -243,7 +244,9 @@ public class BancoImobiliario {
 		// Imprime o valor pago em aluguéis por cada jogador
 		estatisticas += "5:";
 		for(int i = 0; i < numJogadores; i++) {
-			estatisticas += (i+1) + "-" + jogadores[i].getAluguelPago();
+			aux = df.format(jogadores[i].getAluguelPago());
+			
+			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
 				estatisticas += ";";
 			}
@@ -253,14 +256,16 @@ public class BancoImobiliario {
 		// Imprime o valor gasto na compra de imóveis por cada jogador
 		estatisticas += "6:";
 		for(int i = 0; i < numJogadores; i++) {
-			estatisticas += (i+1) + "-" + jogadores[i].getCompraImoveis();
+			aux = df.format(jogadores[i].getCompraImoveis());
+			
+			estatisticas += (i+1) + "-" + aux;
 			if(i + 1 < numJogadores) {
 				estatisticas += ";";
 			}
 		}
 		estatisticas += "\n";
 		
-		// Imprime o valor gasto na compra de imóveis por cada jogador
+		// Imprime o número de "passe a vez" de cada jogador.
 		estatisticas += "7:";
 		for(int i = 0; i < numJogadores; i++) {
 			estatisticas += (i+1) + "-" + jogadores[i].getNumPasseVez();
@@ -268,6 +273,7 @@ public class BancoImobiliario {
 				estatisticas += ";";
 			}
 		}
+		estatisticas += "\n";
 		
 		return estatisticas;
 	}
