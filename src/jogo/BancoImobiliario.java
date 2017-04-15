@@ -270,7 +270,7 @@ public class BancoImobiliario {
 	 * @return String que representa as estatísticas do jogo.
 	 */
 	public String imprimeEstatisticas() {
-		DecimalFormat df = new DecimalFormat("0");
+		DecimalFormat df = new DecimalFormat("0.00");
 		DecimalFormatSymbols sym = DecimalFormatSymbols.getInstance();
 		sym.setDecimalSeparator('.');
 		df.setDecimalFormatSymbols(sym);
