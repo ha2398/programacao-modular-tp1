@@ -1,6 +1,6 @@
 package jogo;
 
-public class Jogador {
+public abstract class Jogador {
 	private int id;
 	private double saldo;
 	

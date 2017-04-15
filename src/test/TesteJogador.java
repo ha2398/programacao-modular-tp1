@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import jogo.JogadorHumano;
+import jogo.BancoImobiliario;
 import jogo.JogadorBanco;
 
 public class TesteJogador {
@@ -72,7 +73,7 @@ public class TesteJogador {
 	@Test
 	public void testaPagaRodada() {
 		double saldoInicial = j2.getSaldo();
-		j1.pagaRodada(j2);
-		assertEquals(saldoInicial + JogadorBanco.valorRodada, j2.getSaldo(), 0.001);
+		j1.pagaRodada(j2, 500.00);
+		assertEquals(saldoInicial + BancoImobiliario.valorRodada, j2.getSaldo(), 0.001);
 	}
 }
