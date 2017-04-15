@@ -53,7 +53,7 @@ public class TesteBancoImobiliario {
 	}
 	
 	@Test
-	public void testacriaTipoPosicaoStart() {
+	public void testaCriaTipoPosicaoStart() {
 		String[] linha = {"1", "1", "1"};
 		
 		PosicaoTabuleiro p = jogo.criaTipoPosicao(linha, 1, 1);
@@ -61,7 +61,7 @@ public class TesteBancoImobiliario {
 	}
 	
 	@Test
-	public void testacriaTipoPosicaoPassaAVez() {
+	public void testaCriaTipoPosicaoPassaAVez() {
 		String[] linha = {"2", "2", "2"};
 		
 		PosicaoTabuleiro p = jogo.criaTipoPosicao(linha, 2, 2);
@@ -69,7 +69,7 @@ public class TesteBancoImobiliario {
 	}
 	
 	@Test
-	public void testacriaTipoPosicaoImovel() {
+	public void testaCriaTipoPosicaoImovel() {
 		String[] linha = {"3", "3", "3", "1", "500", "10"};
 		
 		PosicaoTabuleiro p = jogo.criaTipoPosicao(linha, 3, 3);
@@ -77,5 +77,8 @@ public class TesteBancoImobiliario {
 		assertEquals(p.getImovel().getTipo(), Imovel.RESIDENCIA);
 	}
 	
-	
+	@Test
+	public void testaJogoTerminou() {
+		assertEquals(jogo.jogoTerminou("DUMP"), true);
+	}	
 }

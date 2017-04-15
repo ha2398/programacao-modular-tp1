@@ -74,7 +74,7 @@ public class JogadorHumano extends Jogador {
 
 	/* Métodos do jogador */
 
-	public void incVoltasTabuleiro() {
+	private void incVoltasTabuleiro() {
 		this.voltasTabuleiro++;
 	}
 
@@ -100,6 +100,7 @@ public class JogadorHumano extends Jogador {
 		this.setPosicaoTabuleiro((posicaoAtual != 0) ? posicaoAtual : tamanho);
 
 		if ((posicaoAnterior + dado) > tamanho) {
+			this.incVoltasTabuleiro();
 			return true;
 		}
 		return false;

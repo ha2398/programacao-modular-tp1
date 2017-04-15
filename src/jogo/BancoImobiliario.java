@@ -23,7 +23,6 @@ public class BancoImobiliario {
 	private JogadorBanco banco;
 
 	/* Variáveis referentes ao jogo */
-	private int numJogadas;
 	private int rodadas;
 
 	/**
@@ -38,11 +37,22 @@ public class BancoImobiliario {
 
 	/**
 	 * Construtor para BancoImobiliario.
+	 * 
+	 * @param numJogadores
+	 *            Número de jogadores
+	 * @param posicaoInicial
+	 *            Posição inicial dos jogadores no tabuleiro
+	 * @param tabuleiro
+	 *            Tabuleiro do jogo
+	 * @param jogadores
+	 *            Vector de JogadoresHumanos
+	 * @param banco
+	 *            Jogador banco
 	 */
 	public BancoImobiliario(int numJogadores, int posicaoInicial, Tabuleiro tabuleiro, Vector<JogadorHumano> jogadores,
 			JogadorBanco banco) {
 		this.pInicialJogadores = posicaoInicial;
-		this.numJogadas = numJogadores;
+		this.numJogadores = numJogadores;
 		this.rodadas = 0;
 		this.tabuleiro = tabuleiro;
 		this.banco = banco;
@@ -140,15 +150,18 @@ public class BancoImobiliario {
 			int idDonoImovel = imovelAtual.getDono();
 
 			if (idDonoImovel == Imovel.BANCO) {
-				jogador.compraImovel(imovelAtual);
+				if (!jogador.compraImovel(imovelAtual)) {
+					jogador.setAtivo(false);
+					this.jogadoresAtivos--;
+				}
 			} else if (idDonoImovel != jogador.getId()) {
 				JogadorHumano donoImovel = jogadores.get(idDonoImovel - 1);
-				jogador.pagaAluguel(imovelAtual, donoImovel);
+				if (!jogador.pagaAluguel(imovelAtual, donoImovel)) {
+					jogador.setAtivo(false);
+					this.jogadoresAtivos--;
+				}
 			}
 
-			// Verifica se jogador possui saldo negativo e está fora do jogo
-			if (jogador.getSaldo() <= 0)
-				this.jogadoresAtivos--;
 			break;
 		}
 	}
@@ -156,76 +169,98 @@ public class BancoImobiliario {
 	/**
 	 * Processa as jogadas do jogo como descritas no arquivo de entrada de
 	 * jogadas.
+	 * 
+	 * @param leitor
+	 *            Entrada com os dados para processar o jogo
 	 */
 	public void processaJogo(Scanner leitor) {
 		String[] linha; // Corresponde a uma linha do arquivo de entrada.
 		int idJogador; // Identifica o jogador em cada rodada do jogo.
 		int valorDado; // Valor do dado de seis faces tirado na rodada.
+		JogadorHumano jogadorAtual; // armazena jogador atual
+		boolean passouInicio = false; // indica se jogador terminou uma volta do
+										// tabuleiro
 
 		linha = leitor.nextLine().split("%");
-		numJogadas = Integer.parseInt(linha[0]);
-		numJogadores = Integer.parseInt(linha[1]);
+		int numJogadas = Integer.parseInt(linha[0]);
+		this.numJogadores = Integer.parseInt(linha[1]);
 		double saldoInicialJogadores = Integer.parseInt(linha[2]);
 
-		jogadoresAtivos = numJogadores;
-
-		jogadores = new Vector<>();
-		jogadores.setSize(numJogadores);
-
-		banco = new JogadorBanco();
+		this.jogadoresAtivos = numJogadores;
+		this.criaJogadores(numJogadores, saldoInicialJogadores, pInicialJogadores);
 
 		for (int i = 0; i < numJogadas; i++) {
-			// Termina partida caso só exista um jogador com saldo positivo.
-			if (jogadoresAtivos <= 1)
-				break;
 
 			linha = leitor.nextLine().split(";");
 
-			// Finaliza o jogo caso a instrução seja DUMP.
-			if (linha[0].equals("DUMP"))
+			// Verifica condições de término
+			if (this.jogoTerminou(linha[0]) || this.jogadoresAtivos <= 1) {
 				break;
-
-			idJogador = Integer.parseInt(linha[1]);
-
-			// Checa se uma nova rodada está começando.
-			if (idJogador == 1)
-				rodadas++;
-
-			JogadorHumano jogadorAtual = jogadores.get(idJogador - 1);
-
-			// Checa se o jogador atual ainda não realizou nenhuma jogada.
-			if (jogadorAtual == null) {
-				jogadorAtual = new JogadorHumano(idJogador, saldoInicialJogadores, pInicialJogadores);
 			}
 
-			// Jogadores com saldo negativo estão fora da partida.
-			if (jogadorAtual.getSaldo() < 0)
+			/*
+			 * Recebe id do jogador atual e verifica se uma nova rodada está
+			 * começando.
+			 */
+			idJogador = Integer.parseInt(linha[1]);
+			if (idJogador == 1) {
+				rodadas++;
+			}
+			jogadorAtual = jogadores.get(idJogador - 1);
+
+			// Verifica se jogador está ativo
+			if (!jogadorAtual.isAtivo())
 				continue;
 
-			// Jogador joga dado e anda no tabuleiro.
-
-			/**
-			 * Indica se o jogador passou pela posição inicial nessa rodada
-			 */
-			boolean passouInicio = false;
-
+			// Indica se o jogador passou pela posição inicial nessa rodada
 			valorDado = Integer.parseInt(linha[2]);
-			passouInicio = jogadorAtual.andaNoTabuleiro(pInicialJogadores, tabuleiro.getNumPosicoes(), valorDado);
+			passouInicio = jogadorAtual.andaNoTabuleiro(tabuleiro.getNumPosicoes(), valorDado);
 
-			/**
+			/*
 			 * Toda vez que um jogador passa na posição inicial, recebe uma taxa
 			 * do Banco.
 			 */
 			if (passouInicio) {
 				banco.pagaRodada(jogadorAtual, BancoImobiliario.valorRodada);
-				jogadorAtual.incVoltasTabuleiro();
 			}
 
-			PosicaoTabuleiro posicaoAtual = tabuleiro.getTabuleiro().get(jogadorAtual.getPosicao() - 1);
+			PosicaoTabuleiro posicaoAtual = tabuleiro.getTabuleiro().get(jogadorAtual.getPosicaoNoTabuleiro() - 1);
 
-			analisaPosicao(posicaoAtual, jogadorAtual);
+			this.analisaPosicao(posicaoAtual, jogadorAtual);
+		}
+	}
 
-			jogadores.set(idJogador - 1, jogadorAtual);
+	/**
+	 * Verifica condição de término do jogo.
+	 * 
+	 * @param string
+	 *            Instrução recebida
+	 * @return Retorna true se instrução for DUMP, false caso contrário
+	 */
+	public boolean jogoTerminou(String string) {
+		if (string.equals("DUMP"))
+			return true;
+		return false;
+	}
+
+	/**
+	 * Cria um Vector de jogadores definindo o saldo inicial e a posição
+	 * inicial.
+	 * 
+	 * @param numJogadores
+	 *            Quantidade de jogadores
+	 * @param saldoInicialJogadores
+	 *            Saldo inicial disponível para cada jogador
+	 * @param pInicialJogadores
+	 *            Posição inicial em que os jogadores se encontram antes do jogo
+	 *            começar
+	 */
+	private void criaJogadores(int numJogadores, double saldoInicialJogadores, int pInicialJogadores) {
+		this.jogadores = new Vector<>();
+		this.jogadores.setSize(numJogadores);
+
+		for (int i = 0; i < numJogadores; i++) {
+			this.jogadores.set(i, new JogadorHumano(i + 1, saldoInicialJogadores, pInicialJogadores));
 		}
 	}
 
@@ -369,14 +404,6 @@ public class BancoImobiliario {
 
 	public void setBanco(JogadorBanco banco) {
 		this.banco = banco;
-	}
-
-	public int getNumJogadas() {
-		return numJogadas;
-	}
-
-	public void setNumJogadas(int numJogadas) {
-		this.numJogadas = numJogadas;
 	}
 
 	public int getRodadas() {

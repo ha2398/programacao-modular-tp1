@@ -1,21 +1,21 @@
 package jogo;
 
 public class Imovel {
-	
+
 	/* Tipos de imóveis */
 	public static final int RESIDENCIA = 1;
 	public static final int COMERCIO = 2;
 	public static final int INDUSTRIA = 3;
 	public static final int HOTEL = 4;
 	public static final int HOSPITAL = 5;
-	
-	public static final int BANCO = -1;  // Banco é o dono inicial; seu ID é -1
-	
+
+	public static final int BANCO = -1; // Banco é o dono inicial; seu ID é -1
+
 	private int tipo;
 	private int dono;
 	private double valorCompra;
 	private double taxaAluguel;
-	
+
 	public Imovel(int tipo, double compra, double aluguel) {
 		this.tipo = tipo;
 		this.dono = BANCO;
