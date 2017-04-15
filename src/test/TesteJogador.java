@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import jogo.JogadorHumano;
 import jogo.BancoImobiliario;
+import jogo.Imovel;
 import jogo.JogadorBanco;
 
 public class TesteJogador {
@@ -65,9 +66,15 @@ public class TesteJogador {
 	}
 	
 	@Test
-	public void testaJogadorPerdeu() {
+	public void testaJogadorNaoAtivo() {
 		j2.setSaldo(-10.0);
-		assertEquals(true, j2.jogadorPerdeu());
+		assertEquals(false, j2.isAtivo());
+	}
+	
+	@Test
+	public void testaJogadorAtivo() {
+		j2.setSaldo(100.0);
+		assertEquals(true, j2.isAtivo());
 	}
 	
 	@Test
@@ -75,5 +82,32 @@ public class TesteJogador {
 		double saldoInicial = j2.getSaldo();
 		j1.pagaRodada(j2, 500.00);
 		assertEquals(saldoInicial + BancoImobiliario.valorRodada, j2.getSaldo(), 0.001);
+	}
+	
+	@Test
+	public void testaPassaInicioTabuleiro() {
+		assertEquals(j2.andaNoTabuleiro(10, 6), false); // Posição atual é 1
+		assertEquals(j2.andaNoTabuleiro(10, 3), false); // Posição atual é 7
+		assertEquals(j2.andaNoTabuleiro(10, 1), true); // Posição atual é 10
+	}
+	
+	@Test
+	public void testaCompraImovelSaldoSuficiente() {
+		assertEquals(j2.compraImovel(new Imovel(Imovel.BANCO, 5500, 10.0)), true);
+	}
+	
+	@Test
+	public void testaCompraImovelSaldoInsuficiente() {
+		assertEquals(j2.compraImovel(new Imovel(Imovel.BANCO, 6000, 10.0)), false);
+	}
+	
+	@Test
+	public void testaPagaAluguelSaldoSuficiente() {
+		assertEquals(j2.pagaAluguel(new Imovel(Imovel.HOTEL, 5500.0, 10.0), new JogadorHumano(3, 5000.0, 1)), true);
+	}
+	
+	@Test
+	public void testaPagaAluguelSaldoInsuficiente() {
+		assertEquals(j2.pagaAluguel(new Imovel(Imovel.HOTEL, 5500.0, 110.0), new JogadorHumano(3, 5000.0, 1)), false);
 	}
 }
