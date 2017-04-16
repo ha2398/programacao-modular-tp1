@@ -150,10 +150,7 @@ public class BancoImobiliario {
 			int idDonoImovel = imovelAtual.getDono();
 
 			if (idDonoImovel == Imovel.BANCO) {
-				if (!jogador.compraImovel(imovelAtual)) {
-					jogador.setAtivo(false);
-					this.jogadoresAtivos--;
-				}
+				jogador.compraImovel(imovelAtual);
 			} else if (idDonoImovel != jogador.getId()) {
 				JogadorHumano donoImovel = jogadores.get(idDonoImovel - 1);
 				if (!jogador.pagaAluguel(imovelAtual, donoImovel)) {
@@ -190,7 +187,6 @@ public class BancoImobiliario {
 		this.criaJogadores(numJogadores, saldoInicialJogadores, pInicialJogadores);
 
 		for (int i = 0; i < numJogadas; i++) {
-
 			linha = leitor.nextLine().split(";");
 
 			// Verifica condições de término
