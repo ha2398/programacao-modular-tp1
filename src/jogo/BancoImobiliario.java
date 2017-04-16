@@ -211,7 +211,7 @@ public class BancoImobiliario {
 			// Verifica se jogador está ativo
 			if (!jogadorAtual.isAtivo())
 				continue;
-
+			
 			// Indica se o jogador passou pela posição inicial nessa rodada
 			valorDado = Integer.parseInt(linha[2]);
 			passouInicio = jogadorAtual.andaNoTabuleiro(tabuleiro.getNumPosicoes(), valorDado);
