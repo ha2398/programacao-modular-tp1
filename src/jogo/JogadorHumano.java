@@ -1,8 +1,11 @@
 package jogo;
 
+import java.util.Vector;
+
 public class JogadorHumano extends Jogador {
 	private int posicaoNoTabuleiro;
 	private boolean ativo;
+	private Vector<Integer> listaImoveis;
 
 	/* Dados estatísticos sobre os jogadores */
 	private int voltasTabuleiro;
@@ -20,9 +23,18 @@ public class JogadorHumano extends Jogador {
 		this.aluguelPago = 0.0;
 		this.compraImoveis = 0.0;
 		this.ativo = true;
+		this.listaImoveis = new Vector<>();
 	}
 
 	/* Getters e setters */
+	
+	public Vector<Integer> getListaImoveis() {
+		return listaImoveis;
+	}
+	
+	public void setListaImoveis(Vector<Integer> lista) {
+		this.listaImoveis = lista;
+	}
 
 	public boolean isAtivo() {
 		return this.ativo && this.getSaldo() >= 0;
@@ -120,6 +132,9 @@ public class JogadorHumano extends Jogador {
 		if (this.getSaldo() < valor)
 			return false;
 
+		// Adiciona posição do tabuleiro à lista de imóveis do jogador.
+		this.listaImoveis.add(this.getPosicaoNoTabuleiro());
+		
 		this.reduzSaldo(valor);
 		imovelComprado.setDono(this.getId());
 		this.aumentaCompraImoveis(valor);

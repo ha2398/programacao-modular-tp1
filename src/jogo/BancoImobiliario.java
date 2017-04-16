@@ -135,9 +135,12 @@ public class BancoImobiliario {
 	 *            posição em que o jogador caiu
 	 * @param jogador
 	 *            jogador atual
+	 * @return true se, e somente se, um jogador é eliminado nessa posição.
+	 * 
 	 */
-	private void analisaPosicao(PosicaoTabuleiro posicao, JogadorHumano jogador) {
+	private boolean analisaPosicao(PosicaoTabuleiro posicao, JogadorHumano jogador) {
 		int tipo = posicao.getTipo();
+		boolean jogadorSaiu = false;
 
 		switch (tipo) {
 		case PosicaoTabuleiro.INICIO:
@@ -156,11 +159,30 @@ public class BancoImobiliario {
 				if (!jogador.pagaAluguel(imovelAtual, donoImovel)) {
 					jogador.setAtivo(false);
 					this.jogadoresAtivos--;
+					jogadorSaiu = true;
 				}
 			}
 
 			break;
 		}
+		
+		return jogadorSaiu;
+	}
+	
+	/**
+	 * Retorna os imóveis de um jogador eliminado ao banco.
+	 * 
+	 * @param jogador
+	 * 			jogador eliminado
+	 */
+	public void retornaImoveisAoBanco(JogadorHumano jogador) {
+		Vector<Integer> listaImoveis = jogador.getListaImoveis();
+		Vector<PosicaoTabuleiro> tab = this.getTabuleiro().getTabuleiro();
+		
+		for (Integer i : listaImoveis)
+			tab.get(i-1).getImovel().setDono(Imovel.BANCO);
+		
+		jogador.setListaImoveis(null);
 	}
 
 	/**
@@ -187,6 +209,7 @@ public class BancoImobiliario {
 		this.criaJogadores(numJogadores, saldoInicialJogadores, pInicialJogadores);
 
 		for (int i = 0; i < numJogadas; i++) {
+			boolean jogadorEliminado = false;
 			linha = leitor.nextLine().split(";");
 
 			// Verifica condições de término
@@ -222,7 +245,10 @@ public class BancoImobiliario {
 
 			PosicaoTabuleiro posicaoAtual = tabuleiro.getTabuleiro().get(jogadorAtual.getPosicaoNoTabuleiro() - 1);
 
-			this.analisaPosicao(posicaoAtual, jogadorAtual);
+			// Retorna os imóveis do jogador eliminado (caso haja um) ao Banco.
+			jogadorEliminado = this.analisaPosicao(posicaoAtual, jogadorAtual);
+			if (jogadorEliminado)
+				this.retornaImoveisAoBanco(jogadorAtual);
 		}
 	}
 
